@@ -1,0 +1,42 @@
+# Build directories
+build/
+bin/
+obj/
+out/
+
+# Object files
+*.o
+*.obj
+*.elf
+
+# ROM files
+*.gb
+*.gbc
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# IDE specific files
+.idea/
+*.swp
+*~
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Dependency directories
+vendor/
+deps/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# Log files
+*.log 
