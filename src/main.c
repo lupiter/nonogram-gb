@@ -9,7 +9,6 @@
 void main(void)
 {
 	title_loop();
-
     menu_loop();
 
     // Loop forever

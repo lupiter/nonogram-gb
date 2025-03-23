@@ -6,12 +6,8 @@
 #define CGB_BKG_PAL_0 0u
 #define CGB_ONE_PAL   1u
 
-#if _cpu == CGB_TYPE
-#include <gb/cgb.h>
 static const palette_color_t cgb_pal_black[] = {RGB_BLACK, RGB_BLACK, RGB_BLACK, RGB_BLACK};
-#else
 static const uint8_t dmg_pal_black[] = {0, 0, 0, 0};
-#endif
 
 void blank_screen(void) {
     if (_cpu == CGB_TYPE) {

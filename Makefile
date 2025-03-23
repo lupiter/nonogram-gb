@@ -51,6 +51,8 @@ compile.bat: Makefile
 	@echo "REM Automatically generated from Makefile" > compile.bat
 	@make -sn | sed y/\\//\\\\/ | sed s/mkdir\ -p\/mkdir\/ | grep -v make >> compile.bat
 
+assets: $(IMGSOURCES)
+
 # Use png2asset to convert the png into C formatted metasprite data
 # -map                    : Use "map style" output, not metasprite
 # -bpp 2                  : Use 2bpp output
@@ -86,7 +88,7 @@ $(OBJS):	$(IMGOBJS)
 
 # Link the compiled object files into a .gb ROM file
 $(BINS):	$(OBJS)
-	$(LCC) $(LCCFLAGS) -o $(BINS) $(IMGOBJS) $(OBJS)
+	$(LCC) $(LCCFLAGS) -o $(BINS) $(OBJS)
 
 clean:
 	rm -f  $(OBJDIR)/*.*
