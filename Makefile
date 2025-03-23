@@ -30,20 +30,28 @@ PROJECTNAME = NonogramMini
 
 SRCDIR      = src
 OBJDIR      = obj
-RESOBJSRC   = obj/assets
+RESOBJSRC_BG   = generated/assets/background
+RESOBJSRC_SPR  = generated/assets/sprite
 RESDIR      = assets
+RESDIR_BG   = assets/background
+RESDIR_SPR  = assets/sprite
 BINDIR      = bin
-MKDIRS      = $(OBJDIR) $(RESOBJSRC) $(BINDIR)
+MKDIRS      = $(OBJDIR) $(RESOBJSRC_BG) $(RESOBJSRC_SPR) $(BINDIR)
 BINS	    = $(BINDIR)/$(PROJECTNAME).gb
 
 # For png2asset: converting source pngs -> .c -> .o
-IMGPNGS     = $(foreach dir,$(RESDIR),$(notdir $(wildcard $(dir)/*.png)))
-IMGSOURCES  = $(IMGPNGS:%.png=$(RESOBJSRC)/%.c)
-IMGOBJS     = $(IMGSOURCES:$(RESOBJSRC)/%.c=$(OBJDIR)/%.o)
+IMGPNGS_BG     = $(foreach dir,$(RESDIR_BG),$(notdir $(wildcard $(dir)/*.png)))
+IMGPNGS_SPR    = $(foreach dir,$(RESDIR_SPR),$(notdir $(wildcard $(dir)/*.png)))
+IMGSOURCES_BG  = $(IMGPNGS_BG:%.png=$(RESOBJSRC_BG)/%_assets.c)
+IMGSOURCES_SPR = $(IMGPNGS_SPR:%.png=$(RESOBJSRC_SPR)/%_assets.c)
+IMGOBJS_BG     = $(IMGSOURCES_BG:$(RESOBJSRC_BG)/%.c=$(OBJDIR)/%.o)
+IMGOBJS_SPR    = $(IMGSOURCES_SPR:$(RESOBJSRC_SPR)/%.c=$(OBJDIR)/%.o)
 
-CSOURCES    = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c))) $(foreach dir,$(RESDIR),$(notdir $(wildcard $(dir)/*.c)))
+# Only include .c files from src/ directory
+CSOURCES    = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c)))
 ASMSOURCES  = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.s)))
-OBJS        = $(CSOURCES:%.c=$(OBJDIR)/%.o) $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
+SRCOBJS     = $(CSOURCES:%.c=$(OBJDIR)/%.o) $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
+OBJS        = $(SRCOBJS) $(IMGOBJS_BG) $(IMGOBJS_SPR)
 
 all: $(BINS)
 
@@ -51,19 +59,30 @@ compile.bat: Makefile
 	@echo "REM Automatically generated from Makefile" > compile.bat
 	@make -sn | sed y/\\//\\\\/ | sed s/mkdir\ -p\/mkdir\/ | grep -v make >> compile.bat
 
-assets: $(IMGSOURCES)
+assets: $(IMGSOURCES_BG) $(IMGSOURCES_SPR)
 
-# Use png2asset to convert the png into C formatted metasprite data
+# Use png2asset to convert the map png into C formatted metasprite data
 # -map                    : Use "map style" output, not metasprite
 # -bpp 2                  : Use 2bpp output
 # -c ...                  : Set C output file
 # Convert metasprite .pngs in res/ -> .c files in obj/<platform ext>/src/
-$(RESOBJSRC)/%.c:	$(RESDIR)/%.png
+$(RESOBJSRC_BG)/%_assets.c:	$(RESDIR_BG)/%.png
 	$(PNG2ASSET) $< -map -bpp 2 -c $@
+
+# Use png2asset to convert the spritepng into C formatted metasprite data
+# -map                    : Use "map style" output, not metasprite
+# -bpp 2                  : Use 2bpp output
+# -c ...                  : Set C output file
+# Convert metasprite .pngs in res/ -> .c files in obj/<platform ext>/src/
+$(RESOBJSRC_SPR)/%_assets.c:	$(RESDIR_SPR)/%.png
+	$(PNG2ASSET) $< -bpp 2 -c $@ -spr8x8
 
 # Compile the pngs that were converted to .c files
 # .c files in obj/res/ -> .o files in obj/
-$(OBJDIR)/%.o:	$(RESOBJSRC)/%.c
+$(OBJDIR)/%.o:	$(RESOBJSRC_BG)/%.c
+	$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
+
+$(OBJDIR)/%.o:	$(RESOBJSRC_SPR)/%.c
 	$(LCC) $(LCCFLAGS) $(CFLAGS) -c -o $@ $<
 
 # Compile .c files in "src/" to .o object files
@@ -71,7 +90,10 @@ $(OBJDIR)/%.o:	$(SRCDIR)/%.c
 	$(LCC) $(LCCFLAGS) -c -o $@ $<
 
 # Compile .c files in "res/" to .o object files
-$(OBJDIR)/%.o:	$(RESDIR)/%.c
+$(OBJDIR)/%.o:	$(RESDIR_BG)/%.c
+	$(LCC) $(LCCFLAGS) -c -o $@ $<
+
+$(OBJDIR)/%.o:	$(RESDIR_SPR)/%.c
 	$(LCC) $(LCCFLAGS) -c -o $@ $<
 
 # Compile .s assembly files in "src/" to .o object files
@@ -84,15 +106,16 @@ $(OBJDIR)/%.s:	$(SRCDIR)/%.c
 	$(LCC) $(LCCFLAGS) -S -o $@ $<
 
 # Convert images first so they're available when compiling the main sources
-$(OBJS):	$(IMGOBJS)
+$(OBJS):	$(IMGOBJS_BG) $(IMGOBJS_SPR)
 
 # Link the compiled object files into a .gb ROM file
-$(BINS):	$(OBJS)
-	$(LCC) $(LCCFLAGS) -o $(BINS) $(OBJS)
+$(BINS):	$(SRCOBJS) $(IMGOBJS_BG) $(IMGOBJS_SPR)
+	$(LCC) $(LCCFLAGS) -o $(BINS) $(SRCOBJS) $(IMGOBJS_BG) $(IMGOBJS_SPR)
 
 clean:
 	rm -f  $(OBJDIR)/*.*
-	rm -f  $(RESOBJSRC)/*.*
+	rm -f  $(RESOBJSRC_BG)/*.*
+	rm -f  $(RESOBJSRC_SPR)/*.*
 
 # create necessary directories after Makefile is parsed but before build
 # info prevents the command from being pasted into the makefile

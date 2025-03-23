@@ -3,6 +3,7 @@ build/
 bin/
 obj/
 out/
+generated/
 
 # Object files
 *.o

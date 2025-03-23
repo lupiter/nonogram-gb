@@ -3,9 +3,6 @@
 #include <gb/drawing.h>
 #include "graphics_util.h"
 
-#define CGB_BKG_PAL_0 0u
-#define CGB_ONE_PAL   1u
-
 static const palette_color_t cgb_pal_black[] = {RGB_BLACK, RGB_BLACK, RGB_BLACK, RGB_BLACK};
 static const uint8_t dmg_pal_black[] = {0, 0, 0, 0};
 
