@@ -94,8 +94,18 @@ uint8_t wrap_cursor(uint8_t value, uint8_t min, uint8_t max)
     return value;
 }
 
+static const uint8_t menu_options[7][4] = {
+    {0, 7, 14, 21},
+    {1, 8, 15, 22},
+    {2, 9, 16, 23},
+    {3, 10, 17, 24},
+    {4, 11, 18, 25},
+    {5, 12, 19, 26},
+    {6, 13, 20, 27},
+};
 
-void menu_loop(void)
+
+uint8_t menu_loop(void)
 {
     init_menu();
     init_cursor();
@@ -113,7 +123,9 @@ void menu_loop(void)
         {
             if (joypad_state & J_A)
             {
-                break;
+                uint8_t selected_option_y = (cursor_y - min_cursor_y) / cursor_y_step;
+                uint8_t selected_option_x = (cursor_x - min_cursor_x) / cursor_x_step;
+                return menu_options[selected_option_y][selected_option_x];
             }
             else if (joypad_state & J_UP)
             {
