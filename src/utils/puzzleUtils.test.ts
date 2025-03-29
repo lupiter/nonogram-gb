@@ -1,5 +1,5 @@
 import { Cell, GameState, PuzzleData } from '../types/nonogram';
-import { createEmptyCell, createEmptyGameState, validatePuzzle, createPuzzle, checkSolution, deriveRowHints, deriveColumnHints } from './puzzleUtils';
+import { createEmptyCell, createEmptyGameState, validatePuzzle, checkSolution, deriveRowHints, deriveColumnHints } from './puzzleUtils';
 
 describe('Puzzle Utilities', () => {
   describe('createEmptyCell', () => {
@@ -60,67 +60,28 @@ describe('Puzzle Utilities', () => {
 
   describe('validatePuzzle', () => {
     it('should validate a valid puzzle', () => {
-      const puzzle: PuzzleData = {
-        width: 3,
-        height: 2,
-        solution: [
-          [0, 1, 0],
-          [1, 0, 1],
-        ],
-      };
+      const puzzle: PuzzleData = [
+        [0, 1, 0],
+        [1, 0, 1],
+      ];
       expect(validatePuzzle(puzzle)).toBe(true);
     });
 
     it('should reject invalid dimensions', () => {
-      const puzzle: PuzzleData = {
-        width: 0,
-        height: 2,
-        solution: [
-          [0, 1, 0],
-          [1, 0, 1],
-        ],
-      };
+      const puzzle: PuzzleData = [
+        [0, 1, 0],
+        [1, 0, 1],
+      ];
       expect(validatePuzzle(puzzle)).toBe(false);
-    });
-  });
-
-  describe('createPuzzle', () => {
-    it('should create a valid puzzle', () => {
-      const width = 3;
-      const height = 2;
-      const solution: Cell[][] = [
-        [0, 1, 0],
-        [1, 0, 1],
-      ];
-
-      const puzzle = createPuzzle(width, height, solution);
-      expect(puzzle.width).toBe(width);
-      expect(puzzle.height).toBe(height);
-      expect(puzzle.solution).toEqual(solution);
-    });
-
-    it('should throw on invalid dimensions', () => {
-      const width = 0;
-      const height = 2;
-      const solution: Cell[][] = [
-        [0, 1, 0],
-        [1, 0, 1],
-      ];
-
-      expect(() => createPuzzle(width, height, solution)).toThrow();
     });
   });
 
   describe('checkSolution', () => {
     it('should correctly check a matching solution', () => {
-      const puzzle: PuzzleData = {
-        width: 3,
-        height: 2,
-        solution: [
-          [0, 1, 0],
-          [1, 0, 1],
-        ],
-      };
+      const puzzle: PuzzleData = [
+        [0, 1, 0],
+        [1, 0, 1],
+      ];
 
       const gameState: GameState = {
         cells: [
@@ -137,14 +98,10 @@ describe('Puzzle Utilities', () => {
     });
 
     it('should correctly check a non-matching solution', () => {
-      const puzzle: PuzzleData = {
-        width: 3,
-        height: 2,
-        solution: [
-          [0, 1, 0],
-          [1, 0, 1],
-        ],
-      };
+      const puzzle: PuzzleData = [
+        [0, 1, 0],
+        [1, 0, 1],
+      ];
 
       const gameState: GameState = {
         cells: [

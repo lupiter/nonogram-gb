@@ -81,7 +81,8 @@ export function deriveColumnHints(solution: Cell[][]): Hint[][] {
  * Returns true if the puzzle is valid, throws an error if not
  */
 export function validatePuzzle(puzzle: PuzzleData): boolean {
-  const { width, height, solution } = puzzle;
+  const height = puzzle.length;
+  const width = puzzle[0]?.length ?? 0;
 
   // Check dimensions
   if (width <= 0 || height <= 0) {
@@ -89,11 +90,11 @@ export function validatePuzzle(puzzle: PuzzleData): boolean {
   }
 
   // Check solution dimensions
-  if (solution.length !== height) {
+  if (puzzle.length !== height) {
     return false;
   }
 
-  for (const row of solution) {
+  for (const row of puzzle) {
     if (row.length !== width) {
       return false;
     }
@@ -103,29 +104,11 @@ export function validatePuzzle(puzzle: PuzzleData): boolean {
 }
 
 /**
- * Creates a new puzzle instance from puzzle data
- */
-export function createPuzzle(width: number, height: number, solution: Cell[][]): PuzzleData {
-  if (width <= 0 || height <= 0) {
-    throw new Error(`Width and height must be positive numbers, got ${String(width)}x${String(height)}`);
-  }
-
-  if (solution.length !== height || solution.some(row => row.length !== width)) {
-    throw new Error(`Invalid solution dimensions. Expected ${String(height)}x${String(width)}, got ${String(solution.length)}x${String(solution[0]?.length ?? 0)}`);
-  }
-
-  return {
-    width,
-    height,
-    solution,
-  };
-}
-
-/**
  * Checks if the current game state matches the solution
  */
 export function checkSolution(puzzle: PuzzleData, gameState: GameState): boolean {
-  const { width, height, solution } = puzzle;
+  const height = puzzle.length;
+  const width = puzzle[0]?.length ?? 0;
 
   // Check dimensions
   if (gameState.cells.length !== height || gameState.cells.some(row => row.length !== width)) {
@@ -135,7 +118,7 @@ export function checkSolution(puzzle: PuzzleData, gameState: GameState): boolean
   // Check each cell
   for (let i = 0; i < height; i++) {
     for (let j = 0; j < width; j++) {
-      if (gameState.cells[i][j] !== solution[i][j]) {
+      if (gameState.cells[i][j] !== puzzle[i][j]) {
         return false;
       }
     }

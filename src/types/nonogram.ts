@@ -5,11 +5,7 @@ export type Cell = 0 | 1;
 export type Hint = number;
 
 // Represents the raw puzzle data
-export interface PuzzleData {
-  width: number;
-  height: number;
-  solution: Cell[][];
-}
+export type PuzzleData = Cell[][];
 
 // Represents the current state of the game
 export interface GameState {
