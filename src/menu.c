@@ -5,8 +5,8 @@
 #include <stdint.h>
 #include <gb/metasprites.h>
 
-#include <assets/background/menu_assets.h>
-#include <assets/sprite/menu_cursor_assets.h>
+#include "../generated/assets/background/menu_assets.h"
+#include "../generated/assets/sprite/menu_cursor_assets.h"
 #include "graphics_util.h"
 
 void init_menu(void)
