@@ -1,21 +1,31 @@
+
+
+export enum CellState {
+  EMPTY = 0,
+  FILLED = 1,
+  CROSSED_OUT = 2
+}
+
+export type Cell = CellState.EMPTY | CellState.FILLED | CellState.CROSSED_OUT;
+
 // Represents a single cell in the puzzle
-export type Cell = 0 | 1;
+export type SolutionCell = CellState.EMPTY | CellState.FILLED;
 
 // Represents a hint for a row or column
-export type Hint = number;
+export interface Hint {
+  hint: number;
+  used: boolean;
+}
 
 // Represents the raw puzzle data
-export type PuzzleData = Cell[][];
+export type PuzzleSolutionData = SolutionCell[][];
 
 // Represents the current state of the game
-export interface GameState {
-  cells: Cell[][];
-  errors: boolean[][];
-}
+export type GameState = Cell[][];
 
 // Represents a complete puzzle with its current state
 export interface Puzzle {
-  data: PuzzleData;
+  solution: PuzzleSolutionData;
   state: GameState;
   rowHints: Hint[][];    // Derived from solution
   columnHints: Hint[][]; // Derived from solution
