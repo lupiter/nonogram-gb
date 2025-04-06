@@ -43,15 +43,17 @@ BINS	    = $(BINDIR)/$(PROJECTNAME).gb
 IMGPNGS_BG     = $(foreach dir,$(RESDIR_BG),$(notdir $(wildcard $(dir)/*.png)))
 IMGPNGS_SPR    = $(foreach dir,$(RESDIR_SPR),$(notdir $(wildcard $(dir)/*.png)))
 IMGSOURCES_BG  = $(IMGPNGS_BG:%.png=$(RESOBJSRC_BG)/%_assets.c)
+IMGSOURCES_BG_FULL  = $(IMGPNGS_BG:%.png=$(RESOBJSRC_BG)/%_assets_full.c)
 IMGSOURCES_SPR = $(IMGPNGS_SPR:%.png=$(RESOBJSRC_SPR)/%_assets.c)
 IMGOBJS_BG     = $(IMGSOURCES_BG:$(RESOBJSRC_BG)/%.c=$(OBJDIR)/%.o)
+IMGOBJS_BG_FULL = $(IMGSOURCES_BG_FULL:$(RESOBJSRC_BG)/%.c=$(OBJDIR)/%.o)
 IMGOBJS_SPR    = $(IMGSOURCES_SPR:$(RESOBJSRC_SPR)/%.c=$(OBJDIR)/%.o)
 
 # Only include .c files from src/ directory
 CSOURCES    = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.c)))
 ASMSOURCES  = $(foreach dir,$(SRCDIR),$(notdir $(wildcard $(dir)/*.s)))
 SRCOBJS     = $(CSOURCES:%.c=$(OBJDIR)/%.o) $(ASMSOURCES:%.s=$(OBJDIR)/%.o)
-OBJS        = $(SRCOBJS) $(IMGOBJS_BG) $(IMGOBJS_SPR)
+OBJS        = $(SRCOBJS) $(IMGOBJS_BG) $(IMGOBJS_BG_FULL) $(IMGOBJS_SPR)
 
 all: $(BINS)
 
@@ -59,7 +61,7 @@ compile.bat: Makefile
 	@echo "REM Automatically generated from Makefile" > compile.bat
 	@make -sn | sed y/\\//\\\\/ | sed s/mkdir\ -p\/mkdir\/ | grep -v make >> compile.bat
 
-assets: $(IMGSOURCES_BG) $(IMGSOURCES_SPR)
+assets: $(IMGSOURCES_BG) $(IMGSOURCES_BG_FULL) $(IMGSOURCES_SPR)
 
 # Use png2asset to convert the map png into C formatted metasprite data
 # -map                    : Use "map style" output, not metasprite
@@ -68,6 +70,10 @@ assets: $(IMGSOURCES_BG) $(IMGSOURCES_SPR)
 # Convert metasprite .pngs in res/ -> .c files in obj/<platform ext>/src/
 $(RESOBJSRC_BG)/%_assets.c:	$(RESDIR_BG)/%.png
 	$(PNG2ASSET) $< -map -bpp 2 -c $@
+
+# Generate the maps but also without de-duplicating the tiles
+$(RESOBJSRC_BG)/%_assets_full.c:	$(RESDIR_BG)/%.png
+	$(PNG2ASSET) $< -map -bpp 2 -keep_duplicate_tiles -c $@
 
 # Use png2asset to convert the spritepng into C formatted metasprite data
 # -map                    : Use "map style" output, not metasprite
