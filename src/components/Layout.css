@@ -1,0 +1,27 @@
+nav {
+  display: flex;
+}
+
+nav a {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+main {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}

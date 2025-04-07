@@ -1,0 +1,39 @@
+.hint-numbers {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.hint-numbers.vertical {
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 100px;
+  text-align: center;
+}
+
+.hint-numbers.horizontal {
+  flex-direction: row;
+  justify-content: flex-end;
+  min-width: 100px;
+  text-align: right;
+}
+
+/* Override table styles */
+table.puzzle-grid th .hint-numbers.horizontal {
+  flex-direction: row;
+  justify-content: flex-end;
+  min-width: 100px;
+  text-align: right;
+  min-height: auto;
+}
+
+.hint-numbers span {
+  margin: 0;
+  color: #666;
+  white-space: nowrap;
+}
+
+.hint-numbers span.used {
+  color: #999;
+  text-decoration: line-through;
+} 
